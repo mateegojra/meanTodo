@@ -15,8 +15,8 @@ var Todo = mongoose.model('Todo', {
     text : String
 });
 
-app.get('*', function(req, res) {
-    res.sendfile('./public/index.html'); 
+app.get('/', function(req, res) {
+    res.sendFile(__dirname +'/public/index.html'); 
 });
 
 app.get('/api/todos', function(req, res){
@@ -47,7 +47,7 @@ app.post('/api/todos', function(req, res){
 });
 
 app.delete('/api/todos/:id', function(req, res){
-    Todo.remove({
+    Todo.deleteOne({
         _id: req.params.id
     }, 
     function(err){
@@ -55,6 +55,17 @@ app.delete('/api/todos/:id', function(req, res){
         {
             Todo.find(function(e, ts){
                 res.json(ts);
+            });
+        }
+    });
+});
+
+app.post('/api/todo/:id', (req, res) => {
+    Todo.updateOne({_id: req.params.id}, {text: req.body.text}, function(e, r){
+        if(!e)
+        {
+            Todo.find((e, tds) => {
+                res.json(tds);
             });
         }
     });
